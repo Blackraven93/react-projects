@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/react-projects/static/js/main.f9e98528.chunk.js",
-    "main.js.map": "/react-projects/static/js/main.f9e98528.chunk.js.map",
+    "main.js": "/react-projects/static/js/main.eb60a908.chunk.js",
+    "main.js.map": "/react-projects/static/js/main.eb60a908.chunk.js.map",
     "runtime-main.js": "/react-projects/static/js/runtime-main.d0b1297f.js",
     "runtime-main.js.map": "/react-projects/static/js/runtime-main.d0b1297f.js.map",
     "static/js/2.20a1b89f.chunk.js": "/react-projects/static/js/2.20a1b89f.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.d0b1297f.js",
     "static/js/2.20a1b89f.chunk.js",
-    "static/js/main.f9e98528.chunk.js"
+    "static/js/main.eb60a908.chunk.js"
   ]
 }
