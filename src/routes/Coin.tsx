@@ -81,6 +81,7 @@ interface PriceData {
     };
 }
 
+
 const Container = styled.div`
     padding: 0px 20px;
     max-width: 480px;
@@ -100,15 +101,15 @@ const Title = styled.h1`
     font-size: 48px;
 `
 const BackBtn = styled.button`
-    width: 15%;
-    height: 5vh;
+    width: 90px;
+    height: 4vh;
     color:${props => props.theme.textColor};
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${props => props.theme.coinCardColor};
     border:0;
     border-radius: 100px;
     &:hover {
-        width: 16%;
-        height: 6vh;
+        width: 100px;
+        height: 5vh;
     }
 `
 
@@ -120,7 +121,8 @@ const Loader = styled.span`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  color:${props => props.theme.textColor};
+  background-color: ${props => props.theme.coinCardColor};
   padding: 10px 20px;
   border-radius: 10px;
 `;
@@ -153,7 +155,7 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.theme.coinCardColor};
   padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
@@ -165,8 +167,11 @@ const Tab = styled.span<{ isActive: boolean }>`
   }
 `;
 
+interface ICoinProps {
+    isDark:boolean
+}
 
-const Coin = () => {
+const Coin = ({isDark}:ICoinProps) => {
 
     const { coinId } = useParams() as RouteParmas; // 이건 coinId을 (Param) 받음
     const { state } = useLocation(); // Link state로 내려준 값을 받을 수 있다.
@@ -249,7 +254,7 @@ const Coin = () => {
                             element={<Price coinId={coinId} />} />
                         <Route
                             path="chart"
-                            element={<Chart coinId={coinId} />} />
+                            element={<Chart coinId={coinId} isDark={isDark} />} />
                     </Routes>
                 </>
             )}

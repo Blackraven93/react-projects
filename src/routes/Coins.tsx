@@ -12,15 +12,32 @@ const Container = styled.div`
 const Header = styled.header`
     height: 10vh;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 `;
+
+const DarkModeBtn = styled.button`
+    width: 90px;
+    height: 4vh;
+    color:${props => props.theme.textColor};
+    background-color: ${props => props.theme.coinCardColor};
+    border:0;
+    border-radius: 100px;
+
+    &:focus {
+        cursor: pointer
+    }
+    &:hover {
+        width: 100px;
+        height: 5vh;
+    }
+`
 
 const CoinsList = styled.ul``;
 
 const Coin = styled.li`
-    background-color: white;
-    color:${props => props.theme.bgColor};
+    background-color: ${(props) => props.theme.coinCardColor};
+    color:${props => props.theme.textColor};
     padding: 20px;
     border-radius: 15px;
     margin-bottom: 10px;
@@ -48,6 +65,12 @@ const Loader = styled.span`
     text-align: center;
 `
 
+const Img = styled.img`
+    margin-right:10px;
+    width: 35px;
+    height: 35px;
+`
+
 interface Icoin {
     id: string,
     name: string,
@@ -58,21 +81,19 @@ interface Icoin {
     type: string,
 }
 
-const Img = styled.img`
-    margin-right:10px;
-    width: 35px;
-    height: 35px;
-`
+interface ICoinsProps {
+    toggleDark: () => void;
+}
 
 
-
-const Coins = () => {
+const Coins = ({toggleDark}: ICoinsProps) => {
     const { isLoading, data } = useQuery<Icoin[]>("allCoins", fetchCoins)
 
     return (
         <Container>
             <Header>
                 <Title>Coins</Title>
+                <DarkModeBtn onClick={toggleDark}>Dark Mode</DarkModeBtn>
             </Header>
             {isLoading ? (<Loader>Loading...</Loader>) :
                 (

@@ -15,9 +15,12 @@ interface IHistorical {
 
 interface ChartProps {
     coinId: string;
+    isDark: boolean;
 }
 
-const Chart = ({ coinId }: ChartProps) => {
+
+
+const Chart = ({ coinId, isDark }: ChartProps) => {
 
     const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
 
@@ -53,7 +56,7 @@ const Chart = ({ coinId }: ChartProps) => {
                     ]}
                     options={{
                         theme: {
-                            mode: "dark",
+                            mode: isDark ? "dark" : "light",
                         },
                         chart: {
                             height: 700,
@@ -70,8 +73,8 @@ const Chart = ({ coinId }: ChartProps) => {
                         plotOptions: {
                             candlestick: {
                               colors: {
-                                upward: "#B5E5CF",
-                                downward: "#FCB5AC"
+                                upward:  isDark ? "#B5E5CF" : "#3D5B59",
+                                downward: isDark ? "#FCB5AC" : "#B99095"
                               }
                             }
                         },
@@ -100,7 +103,7 @@ const Chart = ({ coinId }: ChartProps) => {
                 />
             )}
             {isLoading ?
-                "Loading chart..." :
+                "" :
                 (<ApexChart
                     type="candlestick"
                     series={[
@@ -115,7 +118,7 @@ const Chart = ({ coinId }: ChartProps) => {
                     ]}
                     options={{
                         theme: {
-                            mode: "dark",
+                            mode: isDark ? "dark" : "light",
                         },
                         chart: {
                             height: 700,
@@ -132,8 +135,8 @@ const Chart = ({ coinId }: ChartProps) => {
                         plotOptions: {
                             candlestick: {
                               colors: {
-                                upward: "#B5E5CF",
-                                downward: "#FCB5AC"
+                                upward:  isDark ? "#B5E5CF" : "#3D5B59",
+                                downward: isDark ? "#FCB5AC" : "#B99095"
                               }
                             }
                         },
