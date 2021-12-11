@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom"
-import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { fetchCoins } from "../api";
 
@@ -83,13 +82,12 @@ const Coins = () => {
                                 <Coin key={coin.id} >
                                     <Link
                                         to={`/${coin.id}`}
-                                        state={{ name: coin.name, rank: coin.rank }}
-                                    >
+                                        state={{ name: coin.name, rank: coin.rank }}>
                                         <Img src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
                                         {coin.name} &rarr;
                                     </Link>
                                 </Coin>
-                            )
+                                )
                             )
                         }
                     </CoinsList>

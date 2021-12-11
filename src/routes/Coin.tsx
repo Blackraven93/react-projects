@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { BrowserRouter, Routes, Route, useMatch } from "react-router-dom";
+import { Routes, Route, useMatch } from "react-router-dom";
 import { Link } from "react-router-dom"
 import Price from './Price'
 import Chart from './Chart'

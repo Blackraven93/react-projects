@@ -21,50 +21,76 @@ const Chart = ({ coinId }: ChartProps) => {
 
     const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
 
+    const openDate = (data: any) => {
+        return data?.map((price: any) => {
+            const timeOpen = new Date(price["time_open"])
+            return [timeOpen.getTime(), [price["open"], price["high"], price["low"], price["close"]]]
+            })
+        }
+
+    const closeDate = (data: any) => {
+        return data?.map((price: any) => {
+            const timeClose = new Date(price["time_close"])
+            return [timeClose.getTime(), [price["open"], price["high"], price["low"], price["close"]]]
+            })
+        }
+
     return (
         <div>
-            {isLoading ?
+            { isLoading ?
                 "Loading chart..." :
-                <ApexChart
-                    type="line"
+                (<ApexChart
+                    type="candlestick"
                     series={[
                         {
-                            name: "Price",
-                            data: data?.map((price) => price.close),
+                            name: "Open Price",
+                            data: openDate(data),
                         },
+                        // {
+                        //     name: "Close Price",
+                        //     data: closeDate(data),
+                        // }
                     ]}
                     options={{
                         theme: {
                             mode: "dark",
                         },
                         chart: {
-                            height: 300,
-                            width: 500,
-                            toolbar: {
-                                show: false,
-                            },
+                            height: 700,
+                            width: 300,
                             background: "transparent",
+                            toolbar: {
+                                autoSelected: "pan",
+                                show: false
+                              },
+                              zoom: {
+                                enabled: false
+                            }
                         },
-                        grid: { show: false },
+                        plotOptions: {
+                            candlestick: {
+                              colors: {
+                                upward: "#B5E5CF",
+                                downward: "#FCB5AC"
+                              }
+                            }
+                        },
                         stroke: {
                             curve: "smooth",
-                            width: 4,
+                            width: 2,
                         },
                         yaxis: {
+
                             show: false,
                         },
                         xaxis: {
-                            axisBorder: { show: false },
-                            axisTicks: { show: false },
-                            labels: { show: false },
                             type: "datetime",
                             categories: data?.map((price) => price.time_close),
                         },
-                        fill: {
-                            type: "gradient",
-                            gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
+                        title: {
+                            text: "Open Time Chart",
+                            align: "left"
                         },
-                        colors: ["#0fbcf9"],
                         tooltip: {
                             y: {
                                 formatter: (value) => `$${value.toFixed(2)}`,
@@ -72,7 +98,68 @@ const Chart = ({ coinId }: ChartProps) => {
                         },
                     }}
                 />
-            }
+            )}
+            {isLoading ?
+                "Loading chart..." :
+                (<ApexChart
+                    type="candlestick"
+                    series={[
+                        {
+                            name: "Open Price",
+                            data: closeDate(data),
+                        },
+                        // {
+                        //     name: "Close Price",
+                        //     data: closeDate(data),
+                        // }
+                    ]}
+                    options={{
+                        theme: {
+                            mode: "dark",
+                        },
+                        chart: {
+                            height: 700,
+                            width: 500,
+                            background: "transparent",
+                            toolbar: {
+                                autoSelected: "pan",
+                                show: false
+                              },
+                              zoom: {
+                                enabled: false
+                              }
+                        },
+                        plotOptions: {
+                            candlestick: {
+                              colors: {
+                                upward: "#B5E5CF",
+                                downward: "#FCB5AC"
+                              }
+                            }
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 2,
+                        },
+                        yaxis: {
+                            show: false,
+                        },
+                        xaxis: {
+                            type: "datetime",
+                            categories: data?.map((price) => price.time_close),
+                        },
+                        title: {
+                            text: "Close Time Chart",
+                            align: "left"
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: (value) => `$${value.toFixed(2)}`,
+                            },
+                        },
+                    }}
+                />
+            )}
         </div>
     )
 }
