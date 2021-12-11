@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import {BrowserRouter, Routes, Route, useMatch} from "react-router-dom";
+import { BrowserRouter, Routes, Route, useMatch } from "react-router-dom";
 import { Link } from "react-router-dom"
 import Price from './Price'
 import Chart from './Chart'
 import styled from "styled-components";
+import { useQuery } from "react-query";
+import { fetchCoinInfo, fetchCoinPrice } from "../api";
 
 interface RouteParmas {
     coinId: string;
 }
 
 interface RouterState {
-    name?:string;
-    rank?:number;
+    name?: string;
+    rank?: number;
 }
 
 
@@ -58,7 +60,7 @@ interface PriceData {
     first_data_at: string;
     last_updated: string;
     quotes: {
-        USD:{
+        USD: {
             ath_date: string;
             ath_price: number;
             market_cap: number;
@@ -156,9 +158,9 @@ const Tab = styled.span<{ isActive: boolean }>`
   padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
-    props.isActive ? props.theme.accentColor : props.theme.textColor};
+        props.isActive ? props.theme.accentColor : props.theme.textColor};
   font-weight: ${(props) =>
-    props.isActive && props.theme.fontWeightBold };
+        props.isActive && props.theme.fontWeightBold};
   a {
     display: block;
   }
@@ -168,63 +170,66 @@ const Tab = styled.span<{ isActive: boolean }>`
 const Coin = () => {
 
     const { coinId } = useParams() as RouteParmas; // 이건 coinId을 (Param) 받음
-    const [loading, setLoading] = useState(true);
     const { state } = useLocation(); // Link state로 내려준 값을 받을 수 있다.
-    const [info, setInfo] = useState<InfoData>();
-    const [priceInfo, setPriceInfo] = useState<PriceData>();
-
-
+    // 문제는 버튼을 눌러야 Location 정보가 넘어간다.
     const name = state?.name || "loading..." as RouterState;
     const rank = state?.rank || 0 as RouterState;
-    // 문제는 버튼을 눌러야 Location 정보가 넘어간다.
+
+    const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId))
+    const { isLoading: priceLoading, data: priceData } = useQuery<PriceData>(["price", coinId], () => fetchCoinPrice(coinId))
 
     const priceMatch = useMatch("/:coinId/price")
     const chartMatch = useMatch("/:coinId/chart") // 어디에 있는지 알려줌
 
-    useEffect(() => {
-        (async () => {
-            const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-            const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json()
-            setInfo(infoData);
-            setPriceInfo(priceData);
-            setLoading(false);
-             })();
-    }, [coinId])
+    // const [loading, setLoading] = useState(true);
+    // const [info, setInfo] = useState<InfoData>();
+    // const [priceInfo, setPriceInfo] = useState<PriceData>();
+    // useEffect(() => {
+    //     (async () => {
+    //         const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
+    //         const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json()
+    //         setInfo(infoData);
+    //         setPriceInfo(priceData);
+    //         setLoading(false);
+    //     })();
+    // }, [coinId])
+
+    const loading = infoLoading || priceLoading;
     return (
         <Container>
             <Header>
                 <Title>
-                    {state?.name ? state.name : loading ? "Loading..." : info?.name}
+                    {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
                 </Title>
                 <BackBtn>
                     <Link to='/'> Home </Link>
                 </BackBtn>
             </Header>
-            { loading ? (<Loader>Loading...</Loader>) : (
+            {loading ? (<Loader>Loading...</Loader>) : (
                 <>
                     <Overview>
                         <OverviewItem>
                             <span>Rank:</span>
-                            <span>{info?.rank}</span>
+                            <span>{infoData?.rank}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Symbol:</span>
-                            <span>${info?.symbol}</span>
+                            <span>${infoData?.symbol}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Open Source:</span>
-                            <span>{info?.open_source ? "Yes" : "No"}</span>
+                            <span>{infoData?.open_source ? "Yes" : "No"}</span>
                         </OverviewItem>
                     </Overview>
-                    <Description>{info?.description}</Description>
+                    <Description>{infoData?.description}</Description>
                     <Overview>
                         <OverviewItem>
                             <span>Total Suply:</span>
-                            <span>{priceInfo?.total_supply}</span>
+                            <span>{priceData?.total_supply}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Max Supply:</span>
-                            <span>{priceInfo?.max_supply}</span>
+                            <span>{priceData?.max_supply}</span>
                         </OverviewItem>
                     </Overview>
 
@@ -240,8 +245,12 @@ const Coin = () => {
                     {/* <Link to={`/${coinId}/price`}>Price</Link>
                     <Link to={`/${coinId}/chart`}>Chart</Link> */}
                     <Routes>
-                        <Route path="price" element={<Price/>} />
-                        <Route path="chart" element={<Chart/>} />
+                        <Route
+                            path="price"
+                            element={<Price coinId={coinId} />} />
+                        <Route
+                            path="chart"
+                            element={<Chart coinId={coinId} />} />
                     </Routes>
                 </>
             )}
